@@ -2,9 +2,17 @@ const express = require('express');
 const userRouter = express.Router();
 const Users = require('../model/Users');
 const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/Ecommerce', { useNewUrlParser: true });
 
-userRouter.post((''), (req, res) => {
-    mongoose.connect('mongodb://localhost:27017/Ecommerce', { useNewUrlParser: true });
+console.log("jg")
+userRouter.get('/api/users',(req,res)=>{
+    res.status(200).json({
+        msg: "yellow"
+    });
+});
+
+userRouter.post(("/v1/users"), (req, res) => {   
+    console.log("inside ");
     var user = new Users({
         firstName: req.body.firstName,
         lastName: req.body.lastName,

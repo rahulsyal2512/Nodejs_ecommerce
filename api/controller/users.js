@@ -5,9 +5,8 @@ const mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-userRouter.post((""), (req, res) => {
+userRouter.post((""), (req, res, next) => {
     mongoose.connect('mongodb://localhost:27017/Ecommerce', { useNewUrlParser: true });
-    
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
         var user = new Users({
             firstName: req.body.firstName,
@@ -19,7 +18,6 @@ userRouter.post((""), (req, res) => {
         })
 
         user.save().then(() => {
-            console.log(res)
             res.status(200).json({
                 msg: "Users successful",
                 firstName: req.body.firstName,
@@ -37,5 +35,32 @@ userRouter.post((""), (req, res) => {
             })
     })
 });
+
+
+userRouter.post(('/login'), (req, res) => {
+    mongoose.connect('mongodb://localhost:27017/Ecommerce', { useNewUrlParser: true });
+    Users.findOne({ email: req.body.email })
+        .then((user) => {
+            bcrypt.compare(req.body.password, user.password)
+                .then(function (response) {
+                    if (response) {
+                        res.status(200).json({
+                            msg: 1
+                        })
+                    }
+                    else {
+                        res.status(200).json({
+                            msg: -1
+                        })
+                    }
+                })
+        })
+        .catch((err) => {
+            res.status(422).json({
+                msg: -2,
+                error: err
+            });
+        });
+})
 
 module.exports = userRouter;   
